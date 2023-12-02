@@ -33,17 +33,19 @@ const storageMetricCountKey = "metricCount";
 // Setup
 // ===========================================================================
 
-// Handle dump button.
+// Handle dump button if found.
 let dumpStorageButton = document.getElementById("dumpStorageButton");
-dumpStorageButton.addEventListener("click", function(e){
-  e.preventDefault();
-  console.log("User triggered storage dump to disk.")
-  // Flush any outstanding metrics, then dump to disk.
-  if (metrics.length > 0 ) {
-    flushMetricsToStorage()
-  }
-  dumpStorageToDisk((new Date()).getTime())
-});
+if (dumpStorageButton) {
+  dumpStorageButton.addEventListener("click", function(e){
+    e.preventDefault();
+    console.log("User triggered storage dump to disk.")
+    // Flush any outstanding metrics, then dump to disk.
+    if (metrics.length > 0 ) {
+      flushMetricsToStorage()
+    }
+    dumpStorageToDisk((new Date()).getTime())
+  });
+}
 
 // ===========================================================================
 // Public Functions
