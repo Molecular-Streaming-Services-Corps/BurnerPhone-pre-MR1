@@ -33,15 +33,17 @@ const storageMetricCountKey = "metricCount";
 // Setup
 // ===========================================================================
 
-/*
 // Handle dump button.
 let dumpStorageButton = document.getElementById("dumpStorageButton");
 dumpStorageButton.addEventListener("click", function(e){
   e.preventDefault();
   console.log("User triggered storage dump to disk.")
+  // Flush any outstanding metrics, then dump to disk.
+  if (metrics.length > 0 ) {
+    flushMetricsToStorage()
+  }
   dumpStorageToDisk((new Date()).getTime())
 });
-*/
 
 // ===========================================================================
 // Public Functions
@@ -64,7 +66,6 @@ function StoreEvent(type, url, val) {
   addItemToStorage(
     getEventStorageKey(key), JSON.stringify(item));
   incrementStorageEventCount();
-
 }
 
 // Store metric in array and flush to storage if beyond a threshold.
@@ -99,7 +100,7 @@ function getEventStorageKey(num) {
 }
 
 function getStorageEventCount() {
-  count = getItemFromStorge(storageEventCountKey)
+  count = parseInt(getItemFromStorage(storageEventCountKey))
   if (isNaN(count)) {
     return 0;
   }
@@ -107,7 +108,7 @@ function getStorageEventCount() {
 }
 
 function getStorageMetricCount() {
-  count = getItemFromStorge(storageMetricCountKey)
+  count = parseInt(getItemFromStorage(storageMetricCountKey))
   if (isNaN(count)) {
     return 0;
   }
@@ -147,7 +148,7 @@ function addItemToStorage(key, val) {
   if (localStorageEnabled) {
     localStorage.setItem(key, val)
   } else {
-  sessionStorage.setItem(key, val)
+    sessionStorage.setItem(key, val)
   }
 }
 

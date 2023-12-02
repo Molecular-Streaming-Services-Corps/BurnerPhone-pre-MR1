@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>storage.js test</title>
+  </head>
+  <body>
+    <h3>Create named event:</h3>
+    <form>
+      <input type="text" id="event">
+      <button id="eventButton">Generate event!</button>
+    </form>
+    <h3>Dump metrics and events to disk:</h3>
+    <form>
+      <button id="dumpStorageButton">Dump!</button>
+    </form>
+    <script src="storage_test.js"></script>
+    <script src="storage.js"></script>
+    <h1>Dumps: <span id="dumps"></span></h1>
+    <h1>Events stored: <span id="events"></span></h1>
+    <h1>Metrics stored: <span id="metricSetsStored"></span></h1>
+    <h1>Unstored metrics: <span id="metrics"></span></h1>
+  </body>
+</html>
