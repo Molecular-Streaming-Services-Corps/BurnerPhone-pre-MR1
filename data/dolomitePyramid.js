@@ -7,14 +7,14 @@
                                                |___/                             |__/
 This code works in conjunction with a couple of analog subsystems to "do things to" a nanopore.
 The first analog subsystem is a voltage translator for a Keithley 480 picoammeter. The unit
-has a 3-digit display plus sign and "mirrors" the LED display by providing a +/- 10v output 
+has a 3-digit display plus sign and "mirrors" the LED display by providing a +/- 10v output
 through banana plugs in the back. Since +/- 10v in not something that most uControllers can
-natively handle I made an analog circuit that remaps this +/- 10v output to 3.3v ~ 0v (the 
+natively handle I made an analog circuit that remaps this +/- 10v output to 3.3v ~ 0v (the
 output in the back of the Keithley is inverted). This can be easily read by the ESP32
 uController I am working with. So subsystem #1 is a voltage remapper. The second analog subsystem
 takes the native analog output of the ESP32 DAC, which is 0 ~ 3.3v, and remaps that to +/- 1.65v.
 */
-let leftMargin = 50; // 
+let leftMargin = 50; //
 let vSliderY = 50; // voltage slider package
 let vSliderInc = 10; // voltage slider component spacing
 
@@ -35,7 +35,7 @@ let timeRadioButtons = [];
 // Calculate positioning for the time radio buttons
 let timeRadioStartX = 210; // place the buttons to the right of the control slider.
 let timeRadioSpacing = 40;
-/* 
+/*
  ____       _
 / ___|  ___| |_ _   _ _ __
 \___ \ / _ | __| | | | '_ \
@@ -55,9 +55,9 @@ function setup() {
     let x = (i+1) * spacing ;
     createCurrentRadioButton(labels[i], x);
   }
-  
+
   // Create a voltage slider from 0 to 1.650 with steps of 1.650/255
-  // 1) bottom range 2) top range 3) initial value 4) steps 
+  // 1) bottom range 2) top range 3) initial value 4) steps
   voltageSlider = createSlider(-1.587, 1.587, 0, 3.174/256);
   voltageSlider.position(leftMargin, vSliderY + vSliderInc);
   voltageSlider.input(updateInputBox); // Update input box when the slider changes
@@ -67,18 +67,18 @@ function setup() {
   voltageInput.position(leftMargin, vSliderY + vSliderInc * 4);
   voltageInput.size(50);
   voltageInput.input(updateSlider); // Update slider when the value in input box changes
-  
+
   // Create a pulse slider from 1uS to 1S with steps of ?
   pSlider = createSlider(1, 1000, 0, 1);
   pSlider.position(leftMargin, pSliderY + vSliderInc);
   pSlider.input(updatePInputBox);
-  
+
   // Create an input box for the pulse slider
   pInput = createInput(pSlider.value().toString());
   pInput.position(leftMargin, pSliderY + vSliderInc * 4);
   pInput.size(50);
   pInput.input(updatePSlider); // Update slider when the value in input box changes
-  
+
   // create pulse control buttons sans "pulse"
   for (let i = 0; i < timeUnitLabels.length; i++) {
     let x = timeRadioStartX + i * timeRadioSpacing;
@@ -87,7 +87,7 @@ function setup() {
   }
   // Create "pulse" after creating the time radio buttons
   createPulseButton('pulse', timeRadioStartX+100, pSliderY+10);
-  // Initialize the settings in both the browser and the ESO32 to 
+  // Initialize the settings in both the browser and the ESO32 to
   // known values...
   // the time magnitude button:
   let microsecondRadioButton = timeRadioButtons[0];
@@ -121,17 +121,17 @@ function draw() {
   stroke(0);   // Set stroke to black
   fill(0, 0, 0);   // Set fill to black
   strokeWeight(0);   // Reset stroke weight to default
-  
+
   text("Voltage Control (-1.587V to 1.587V)", leftMargin, vSliderY);
   text("Pulse Width Control (1uS to 1S)", leftMargin, pSliderY);
   textAlign(CENTER);
   text("Keithley Front Panel Range Select", width/4, keithleyY);
   textAlign(LEFT);
-  
-  // Voltage sub-window 
+
+  // Voltage sub-window
   fill(255);
   rect(50, 300, 300, 45); // upper-left point ; x width, y width
-  
+
   fill(0); // Setting color for text again
   text(`Current: ${current}A`, 70, 325);  // A is for Amperes, you can use other units if required.
 
@@ -151,7 +151,7 @@ function draw() {
   // Draw graticule
   drawGraticule(voltageRect);
   drawGraticule(currentRect);
-  
+
   // Plot voltage values
   strokeWeight(1);
   drawSignal(voltageValues, voltageRect, color(0, 255, 0));
@@ -197,7 +197,7 @@ function updatePInputBox() {
   pInput.value(pSlider.value());
 }
 
-function updatePSlider() { 
+function updatePSlider() {
   let val = parseFloat(pInput.value());
   // You might want to add boundary checks as done previously for voltageInput
   if (val >= 0 && val <= 1000) { // Adjust boundaries as needed
@@ -212,6 +212,7 @@ function sendSliderVoltage(value) {
   let url = window.location.origin + '/setVoltage?value=' + value;
   httpGet(url, 'text', function(result) {
     console.log(result);  // Log the response from ESP32
+    StoreEvent("setVoltage", url, result);
   });
 }
 
@@ -220,6 +221,7 @@ function getCurrent() {
     .then(response => response.text())
     .then(data => {
         current = parseFloat(data);  // assuming the fetched data is a number in string format
+        StoreMetric("current", current);
         // The data is adjusted on the ESP32 side
         redraw();  // Update the canvas with the new value
     })
@@ -238,28 +240,28 @@ function createTimeRadioButton(labelText, x, y) {
     let div = createDiv('');
     div.style('position', 'absolute');
     div.style('text-align', 'center');
-    
+
     let input = createElement('input');
     input.attribute('type', 'radio');
     input.attribute('name', 'radioGroup');
     input.changed(sendTimeDataToESP32);
-    
+
     input.parent(div);
-    
+
     let label = createSpan(labelText);
     label.parent(div);
     label.style('display', 'block');
-    
+
     let divWidth = div.elt.offsetWidth;
     div.style('left', `${x - divWidth / 2}px`);
     div.style('top', `${y+10}px`);
-    
+
     timeRadioButtons.push(input);
 }
 
 // the primitive that is called by the routine that makes buttons
 // to display Keithley current ranges
-function createCurrentRadioButton(labelText, x) { 
+function createCurrentRadioButton(labelText, x) {
   let div = createDiv('');
   div.style('position', 'absolute');
   div.style('text-align', 'center');  // Center align the contents
@@ -267,12 +269,12 @@ function createCurrentRadioButton(labelText, x) {
   let input = createElement('input');
   input.attribute('type', 'radio');
   input.attribute('name', 'currentRadioGroup');  // Ensure all radios belong to the same group
-  
+
   // Preset the radio button for "1nA" to be selected on initialization
   if (labelText === '1nA') {
     input.attribute('checked', 'true');
   }
-  
+
   // Bind the event after defining the input
   input.changed(sendCurrentDataToESP32);
 
@@ -281,7 +283,7 @@ function createCurrentRadioButton(labelText, x) {
   let label = createSpan(labelText);
   label.parent(div);
   label.style('display', 'block');  // Makes the label appear under the button
-  
+
   // Adjusting for div width to center it on the x-coordinate
   let divWidth = div.elt.offsetWidth;
   div.style('left', `${x - divWidth / 2}px`);
@@ -303,11 +305,12 @@ function sendCurrentDataToESP32() {
       '100µA': 5,
       '1mA': 6
     };
-    
+
     let dataToSend = mapValue[selectedValue];
     let url = window.location.origin + '/setcurrentvalue?value=' + dataToSend;
     httpGet(url, 'text', function(result) {
       console.log(result);  // Log the response from ESP32
+      StoreEvent("setcurrentvalue", url, result);
     });
   }
 }
@@ -320,11 +323,12 @@ function sendTimeDataToESP32() {
       'mS': 1,
       'S': 2
     };
-    
+
     let dataToSend = mapValue[selectedValue];
     let url = window.location.origin + '/settimerange?value=' + dataToSend;
     httpGet(url, 'text', function(result) {
       console.log(result);  // Log the response from ESP32
+      StoreEvent("settimerange", url, result);
     });
   }
 }
@@ -353,6 +357,7 @@ function sendPulseToESP32() {
     let url = window.location.origin + `/pulseWasPressed?pulseWidth=${pulseWidthValue}&timeUnit=${timeUnit}`;
     httpGet(url, 'text', function(result) {
         console.log(result);
+        StoreEvent("pulseWasPressed", url, result);
     });
 }
 
@@ -363,7 +368,7 @@ function createPulseButton(labelText, x, y) {
     pulseButton.mousePressed(sendPulseToESP32);  // Assuming you've defined this function
 }
 
-// this section prepares the voltage and current for the oscope 
+// this section prepares the voltage and current for the oscope
 let voltageValues = [];
 let currentValues = [];
 const maxValues = 300;  // Adjust based on your desired display width
