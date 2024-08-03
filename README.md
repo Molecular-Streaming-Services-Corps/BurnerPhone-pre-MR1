@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the `dolomitePyramid.js` file, which is a crucial component of our Molecular Streaming Device project. This code was used for experiments in the fall of 2023, primarily for calibration with a commercial Keithley picoammeter. While this version is several months out of date, it forms the foundation of what will be shipped on the ESP32 microcontrollers in the MR1 Molecular Streaming Device.
+This repository contains the `dolomitePyramid.js` file, which is a crucial component of our Molecular Streaming Device project. This code was used for experiments in the fall of 2023, primarily for calibration with a commercial Keithley picoammeter. It forms the foundation of what will be shipped on the ESP32 microcontrollers in the MR1 Molecular Streaming Device.
 
 ## Context
 
